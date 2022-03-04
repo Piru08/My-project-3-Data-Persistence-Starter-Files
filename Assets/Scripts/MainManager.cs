@@ -16,7 +16,6 @@ public class MainManager : MonoBehaviour
     
     private bool m_Started = false;
     private int m_Points;
-    private int BestPoint;
     private bool m_GameOver = false;
     private string PlayerName;
 
@@ -24,11 +23,10 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (MenuManager.Instance.PlayerName != null)
-        {
-            PlayerName = MenuManager.Instance.PlayerName;
-        }
-        
+        PlayerName = MenuManager.Instance.playername;    
+        PlaseBest();
+            
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -47,10 +45,10 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
-
+       
         if (!m_Started)
         {
-            PlaseBest();
+            
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 m_Started = true;
@@ -60,6 +58,12 @@ public class MainManager : MonoBehaviour
 
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
+            }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                MenuManager.Instance.BestPoint = 0;
+                MenuManager.Instance.playerName = "Player";
+                MenuManager.Instance.Save();
             }
         }
         else if (m_GameOver)
@@ -76,24 +80,26 @@ public class MainManager : MonoBehaviour
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
     }
-    void AddBestPoint(int i, string a)
+    void AddBestPoint(int BestPoint)
     {
-        if (i > BestPoint)
+        if (BestPoint > MenuManager.Instance.BestPoint)
         {
-            PlayerName = a;
-            BestPoint = i;
+
+            MenuManager.Instance.BestPoint = BestPoint;
+            MenuManager.Instance.playerName = PlayerName;
+            MenuManager.Instance.Save();
         }
     }
      void PlaseBest()
     {
         MenuManager.Instance.Load();
-        BestPointText.text = $"Best Score : {MenuManager.Instance.PlayerName} : {MenuManager.Instance.BestPoint}";
+        BestPointText.text = $"Best Score : {MenuManager.Instance.playerName} : {MenuManager.Instance.BestPoint}";
     }
     public void GameOver()
     {
         m_GameOver = true;
-        AddBestPoint(m_Points, PlayerName);
+        AddBestPoint(m_Points);
         GameOverText.SetActive(true);
-        MenuManager.Instance.Save();
+        
     }
 }

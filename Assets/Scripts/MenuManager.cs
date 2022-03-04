@@ -7,7 +7,8 @@ using System.IO;
 public class MenuManager : MonoBehaviour
 {
     public static MenuManager Instance;
-    public string PlayerName;
+    public string playerName;
+    public string playername;
     public int BestPoint;
     public InputField field;
     private void Awake()
@@ -19,15 +20,16 @@ public class MenuManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        if (PlayerName == null)
-        {
-            PlayerName = "Some player";
-        }
+
     }
 
     public void InputName()
     {
-            PlayerName = field.text;
+        playername = field.text;
+        if (playername == null)
+        {
+            playername = "Some player";
+        }
     }
 
     [System.Serializable]
@@ -40,7 +42,7 @@ public class MenuManager : MonoBehaviour
     {
         SaveData data = new SaveData();
         data.BestPoint = BestPoint;
-        data.PlayerName = PlayerName;
+        data.PlayerName = playerName;
 
         string json = JsonUtility.ToJson(data);
 
@@ -55,7 +57,7 @@ public class MenuManager : MonoBehaviour
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
             BestPoint = data.BestPoint;
-            PlayerName = data.PlayerName;
+            playerName = data.PlayerName;
         }
     }
 }
